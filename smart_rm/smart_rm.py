@@ -13,7 +13,7 @@ logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(a
                     level=logging.DEBUG)
 
 parser = argparse.ArgumentParser()
-parser.add_argument("-d", '--delete', help="удаление файла из корзины производится по id")
+parser.add_argument("-d", '--delete', help="удаление файла из корзины, производится по id")
 parser.add_argument("-r", '--remove', help="перемещение файла в корзину")
 parser.add_argument("-q", '--query', action='store_true', help="просмотр информации о корзине")
 parser.add_argument("-c", '--clear', action='store_true', help="очистка корзины")
@@ -21,7 +21,6 @@ parser.add_argument("-rec", '--recovery', help="восстановление ф�
 
 _user = os.getlogin()
 _trash_dir = os.path.expanduser('/home/' + _user + '/.trash_folder')
-
 
 
 class Rm:
@@ -153,7 +152,7 @@ if __name__ == '__main__':
     if args.recovery:
         try:
             trash.recovery(int(args.recovery))
-            print(f'время востановления файла : {datetime.datetime.now() - time_start}')
+            print(f'время восстановления файла : {datetime.datetime.now() - time_start}')
         except:
             logging.warning('корзина пуста')
     if args.delete:
