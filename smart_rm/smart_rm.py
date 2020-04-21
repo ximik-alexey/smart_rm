@@ -6,7 +6,10 @@ import argparse
 import datetime
 import os
 import logging
+import sys
+
 import remove
+
 logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
                     level=logging.DEBUG)
 
@@ -25,30 +28,44 @@ if __name__ == '__main__':
     time_start = datetime.datetime.now()
     if args.remove:
         try:
-            trash.remove(args.remove)
-            print(f'время переноса файла в корзину: {datetime.datetime.now() - time_start}')
-        except:
-            logging.warning(f'нет файла или каталога  {args.remove}')
-
+            if trash.remove(args.remove) != 'error 3':
+                print(f'время переноса файла в корзину: {datetime.datetime.now() - time_start}')
+            else:
+                print(f' файл или каталог отсутствует : {args.remove}')
+        except SystemExit:
+            print(f'файл trash.json отсутствует в корзине.\nавтоматическое восстановление данных невозможно.\n'
+                  f'очистите корзину, либо восстановите данные вручную.')
     if args.recovery:
         try:
             trash.recovery(int(args.recovery))
             print(f'время восстановления файла : {datetime.datetime.now() - time_start}')
+        except SystemExit:
+            print(f'файл trash.json отсутствует в корзине.\nавтоматическое восстановление данных невозможно.\n'
+                  f'очистите корзину, либо восстановите данные вручную.')
         except:
-            logging.warning('корзина пуста')
+            print(f'файла с id {args.recovery} не существует')
     if args.delete:
         try:
             trash.delete(int(args.delete))
             print(f'время удаления файла : {datetime.datetime.now() - time_start}')
+        except SystemExit:
+            print(f'файл trash.json отсутствует в корзине.\nавтоматическое восстановление данных невозможно.\n'
+                  f'очистите корзину, либо восстановите данные вручную.')
         except:
             logging.warning(f'нет файла или каталога в корзине')
     if args.clear:
         trash.clear_trash()
         print(f'время очистки корзины : {datetime.datetime.now() - time_start}')
     if args.query:
-        data = trash.parameters()
-        if not data:
-            print(' корзина пуста')
-        for el in data:
-            print(f'имя файла: {el["name"]} | размер файла: {el["size"]} | id : {el["id_trash"]} | дата удаления :'
-                  f'{datetime.datetime.fromtimestamp(el["time_stamp"])}')
+        try:
+            data = trash.parameters()
+            if not data:
+                print(' корзина пуста')
+            for el in data:
+                print(f'имя файла: {el["name"]} | размер файла: {el["size"]} | id : {el["id_trash"]} | дата удаления :'
+                      f'{datetime.datetime.fromtimestamp(el["time_stamp"])}')
+        except SystemExit:
+            print(f'файл trash.json отсутствует в корзине.\nавтоматическое восстановление данных невозможно.\n'
+                  f'очистите корзину, либо восстановите данные вручную.')
+
+
