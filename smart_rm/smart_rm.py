@@ -6,8 +6,7 @@ import argparse
 import datetime
 import os
 import logging
-
-
+import remove
 logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
                     level=logging.DEBUG)
 
@@ -18,11 +17,10 @@ parser.add_argument("-q", '--query', action='store_true', help="просмотр
 parser.add_argument("-c", '--clear', action='store_true', help="очистка корзины")
 parser.add_argument("-rec", '--recovery', help="восстановление файла из корзины, производиться по id")
 
-_user = os.getlogin()
-_trash_dir = f'/home/{_user}/.trash_folder'
+_trash_dir = f'/home/{os.getlogin()}/.trash_folder'
 
 if __name__ == '__main__':
-    trash = R(_trash_dir)
+    trash = remove.RemoveToTrash(_trash_dir)
     args = parser.parse_args()
     time_start = datetime.datetime.now()
     if args.remove:

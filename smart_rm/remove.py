@@ -46,15 +46,13 @@ class RemoveToTrash:
             folder.append(i)
         files = []
         folders = []
-        address = []
-        for address, dirs, files in folder:
-            for file in files:
-                files.append(f'{address}/{file}')
-                address.append(f'{address}')
-        for address, dirs, files in folder:
-            for dirs in folder:
-                folder.append(f'{address}/{dirs}')
-        return files, reversed(folders), address
+        for addr, dirs, fil in folder:
+            for file in fil:
+                files.append(f'{addr}/{file}')
+        for addr, dirs, fil in folder:
+            for dir in dirs:
+                folders.append(f'{addr}/{dir}')
+        return files, reversed(folders)
 
     def remove(self, link):
         logging.debug('start remove')
@@ -74,11 +72,17 @@ class RemoveToTrash:
         with tarfile.open(f'{self.trash_dir}/{name_archive}', 'w:gz') as archive:
             archive.add(name)
         if os.path.isdir(link):
-            for file, directories in self._file_address(link):
-                os.remove(file)
-                os.rmdir(directories)
+            file, directories = self._file_address(link)
+            for i in file:
+                os.remove(i)
+                logging.debug(f'remove file : {i}')
+            for i in directories:
+                os.rmdir(i)
+                logging.debug(f'remove folder : {i}')
+            os.rmdir(link)
         else:
             os.remove(link)
+            logging.debug(f'remove file : {link}')
 
         size = os.path.getsize(link_archive)
         self.data.append({'name': name, 'size': size, 'link_to_file': link_to_file,
@@ -121,8 +125,6 @@ class RemoveToTrash:
                     index_file = index
                     break
         link_archive = self.data[index_file]['link_archive']
-        # link = self.data[index_file]['link']
-        # name_archive = self.data[index_file]['name_archive']
         os.remove(link_archive)
         del self.data[index_file]
         if self.data:
@@ -140,7 +142,7 @@ class RemoveToTrash:
     def clear_trash(self):
         logging.debug('start clear_trash')
         for file in os.listdir(self.trash_dir):
-            os.remove(file)
+            os.remove(f'{self.trash_dir}/{file}')
             logging.debug(f'remove :{file}')
         os.rmdir(self.trash_dir)
         logging.debug('trash clear completed')
