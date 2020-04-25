@@ -3,12 +3,12 @@
 
 
 import datetime
-import error
+from . import error
 import os
 import logging
 import tarfile
 import sys
-import size as s
+from . import size as s
 import json
 
 
