@@ -93,13 +93,13 @@ class RemoveToTrash:
 
     def remove(self, link):
         logging.debug('start remove')
-        self._check_empty_space(self.trash_dir, link)
-        logging.debug('_check_empty_space completed')
         self._load_data()
         try:
             id_trash = self.data[-1]['id_trash'] + 1
         except:
             id_trash = 0
+        self._check_empty_space(self.trash_dir, link)
+        logging.debug('_check_empty_space completed')
         path = os.path.split(link)
         link_to_file = path[0]
         link = os.path.abspath(link)
